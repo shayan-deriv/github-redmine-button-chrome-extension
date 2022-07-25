@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "GitHub Redmine Button",
+  "description": "Adds a Redmine button to GitHub pull requests pages if the issue number is mentioned in the PR title.",
+  "version": "0.0.1",
+  "homepage_url": "https://github.com/farzin-fs/github-redmine-button-chrome-extension",
+  "author": "Farzin Mirzaie",
+  "host_permissions": ["*://*.github.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["*://*.github.com/*"],
+      "js": ["index.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "16": "assets/icon-16.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  }
+}
