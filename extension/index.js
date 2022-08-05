@@ -1,32 +1,58 @@
 "use strict";
 
-(function () {
-  const container = document.querySelector(".gh-header-actions");
-  const title = document.querySelector(".js-issue-title");
-  const issue = title?.firstChild.nodeValue.split("/")[1];
-  const issue_number = issue
-    .toLocaleLowerCase()
-    .replace("rm", "")
-    .replace("#", "")
-    .trim();
+// Find the actions container.
+function findActionsContainer() {
+  const containerClassName = ".gh-header-actions";
 
-  // Return if the button container or if the issue number is not found.
-  if (!container || isNaN(issue_number)) return;
+  return document.querySelector(containerClassName);
+}
 
-  const button = `
-    <a
-      href="https://redmine.deriv.cloud/issues/${issue}"
-      title="Open Redmine issue"
-      target="_blank"
-    >
-      <button
-        class="btn btn-sm"
-        style="background-color:#B0110F;color:#FFFFFF"
-      >
-        Redmine
-      </button>
-    </a>
-  `;
+// Find the pull request title.
+function findPullRequestTitle() {
+  const titleClassName = ".js-issue-title";
+  const title = document.querySelector(titleClassName);
 
-  container.innerHTML = `${container.innerHTML}${button}`;
-})();
+  return title?.firstChild.nodeValue;
+}
+
+// Find the issue number from the pull request title.
+function findIssueNumber(input) {
+  const five_digit_number_regex = /(\d{5})/g;
+  const numbers = input?.match(five_digit_number_regex);
+
+  return numbers ? Number(numbers[0]) : null;
+}
+
+// Creates a button that links to the issue.
+function createActionButton(issue) {
+  const a = document.createElement("a");
+  a.href = `https://redmine.deriv.cloud/issues/${issue}`;
+  a.title = "Open Redmine Issue";
+  a.target = "_blank";
+
+  const button = document.createElement("button");
+  button.className = "btn btn-sm";
+  button.style = "background-color:#B0110F;color:#FFFFFF";
+  button.textContent = "Redmine";
+
+  a.appendChild(button);
+
+  return a;
+}
+
+// Adds the button to the actions container when the page loads.
+function main() {
+  const container = findActionsContainer();
+
+  if (!container) return;
+
+  const issue = findIssueNumber(findPullRequestTitle());
+
+  if (!issue) return;
+
+  const button = createActionButton(issue);
+
+  container.appendChild(button);
+}
+
+main();
