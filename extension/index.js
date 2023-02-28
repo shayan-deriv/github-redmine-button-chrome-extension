@@ -32,7 +32,7 @@ function createActionButton(issue) {
 
   const button = document.createElement("button");
   button.className = "btn btn-sm";
-  button.style = "background-color:#B0110F;color:#FFFFFF";
+  button.style = "background-color:#B0110F;color:#FFFFFF;margin-right:4px;";
   button.textContent = "Redmine";
 
   a.appendChild(button);
