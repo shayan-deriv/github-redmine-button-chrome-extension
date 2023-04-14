@@ -1,6 +1,6 @@
-# GitHub Redmine Button
+# GitHub Redmine/ClickUp Buttons
 
-Chrome extension that Adds a Redmine button to GitHub pull requests pages if the issue number is mentioned in the PR title.
+Chrome extension that Adds Redmine/ClickUp button to GitHub pull requests pages if the issue number is mentioned in the PR title/branch.
 
 ![sample](sample-dark.png "dark")
 ![sample](sample-light.png "light")

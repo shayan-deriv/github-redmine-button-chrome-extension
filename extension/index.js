@@ -15,29 +15,62 @@ function findPullRequestTitle() {
   return title?.firstChild.nodeValue;
 }
 
-// Find the issue number from the pull request title.
-function findIssueNumber(input) {
-  const five_digit_number_regex = /(\d{5})/g;
-  const numbers = input?.match(five_digit_number_regex);
+// Find the pull request branch.
+function findPullRequestBranchName() {
+  const titleClassName = ".head-ref";
+  const title = document.querySelector(titleClassName);
 
-  return numbers ? Number(numbers[0]) : null;
+  return title?.attributes["title"].value;
 }
 
-// Creates a button that links to the issue.
-function createActionButton(issue) {
+// Find the Redmine issue number from the given input.
+function findRedmineIssue(input) {
+  const regex = /(\d{5})/g;
+  const matches = input?.match(regex);
+
+  return matches ? Number(matches[0]) : null;
+}
+
+// Find the ClickUp issue number from the given input.
+function findClickUpIssue(input) {
+  const regex = /\b(?:[a-zA-Z]-)?\d{3}\b/g;
+  const matches = input?.match(regex);
+
+  return matches ? Number(matches[0]) : null;
+}
+
+// Creates a button that links to the given link.
+function createActionButton(link, title, color) {
   const a = document.createElement("a");
-  a.href = `https://redmine.deriv.cloud/issues/${issue}`;
-  a.title = "Open Redmine Issue";
+  a.href = link;
   a.target = "_blank";
 
   const button = document.createElement("button");
   button.className = "btn btn-sm";
-  button.style = "background-color:#B0110F;color:#FFFFFF;margin-right:4px;";
-  button.textContent = "Redmine";
+  button.style = `background-color:${color};color:#FFFFFF;margin: 0;`;
+  button.textContent = title;
 
   a.appendChild(button);
 
   return a;
+}
+
+// Creates a button that links to the Redmine issue.
+function createRedmineActionButton(issue) {
+  return createActionButton(
+    `https://redmine.deriv.cloud/issues/${issue}`,
+    "Redmine",
+    "#B0110F"
+  );
+}
+
+// Creates a button that links to the ClickUp issue.
+function createClickUpActionButton(issue) {
+  return createActionButton(
+    `https://app.clickup.com/t/20696747/WALL-${issue}`,
+    "ClickUp",
+    "#7b68ee"
+  );
 }
 
 // Adds the button to the actions container when the page loads.
@@ -46,13 +79,21 @@ function main() {
 
   if (!container) return;
 
-  const issue = findIssueNumber(findPullRequestTitle());
+  const title = findPullRequestTitle();
+  const branch = findPullRequestBranchName();
+  const redmine_issue = findRedmineIssue(title) || findRedmineIssue(branch);
+  const clickup_issue = findClickUpIssue(title) || findClickUpIssue(branch);
 
-  if (!issue) return;
+  // If there is no issue number in the title or branch, return.
+  if (!redmine_issue && !clickup_issue) return;
 
-  const button = createActionButton(issue);
+  if (redmine_issue) {
+    container.appendChild(createRedmineActionButton(redmine_issue));
+  }
 
-  container.appendChild(button);
+  if (clickup_issue) {
+    container.appendChild(createClickUpActionButton(clickup_issue));
+  }
 }
 
 main();

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "GitHub Redmine Button",
-  "description": "Adds a Redmine button to GitHub pull requests pages if the issue number is mentioned in the PR title.",
+  "name": "GitHub Redmine/ClickUp Buttons",
+  "description": "Adds a Redmine/ClickUp button to GitHub pull requests pages if the issue number is mentioned in the PR title/branch.",
   "version": "0.0.1",
   "homepage_url": "https://github.com/farzin-fs/github-redmine-button-chrome-extension",
   "author": "Farzin Mirzaie",
