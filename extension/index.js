@@ -28,7 +28,7 @@ function findPullRequestBranchName() {
 function findClickUpIssue(input) {
   // const regex = /[a-zA-Z]*(\s)*-(\s)*\d+\/;
   // const regex = /\/([a-zA-Z]+(\s)*-(\s)*\d+)\/+/g;
-  const regex = /([a-zA-Z]+(\s)*-(\s)*\d+)+/g;
+  const regex = /([a-zA-Z0-9]+(\s)*-(\s)*\d+)+/g;
 
   const matches = input.match(regex);
 
@@ -36,23 +36,30 @@ function findClickUpIssue(input) {
 }
 
 // Creates a button that links to the given link.
-function createActionButton(link, title, color) {
+function createActionButton(link, title, color, disabled) {
   const a = document.createElement("a");
-  a.href = link;
   a.className = "btn btn-sm";
   a.style = `background-color:${color};color:#FFFFFF;margin: 0;`;
-  a.target = "_blank";
   a.textContent = title;
+  if (disabled) {
+    a.style.opacity = 0.4;
+    a.style.cursor = "not-allowed";
+    a.href = '#';
+  } else {
+    a.href = link;
+    a.target = "_blank";
+  }
 
   return a;
 }
 
 // Creates a button that links to the ClickUp issue.
-function createClickUpActionButton(issue) {
+function createClickUpActionButton(issue, disabled = false) {
   return createActionButton(
     `https://app.clickup.com/t/20696747/${issue}`,
     "ClickUp",
-    "#7b68ee"
+    "#7b68ee",
+    disabled
   );
 }
 
@@ -62,7 +69,8 @@ function main() {
   const title = findPullRequestTitle();
   const branch = findPullRequestBranchName();
   const clickup_issue = findClickUpIssue(title) || findClickUpIssue(branch);
-  const cu_btn = createClickUpActionButton(clickup_issue);
+  const disabled = clickup_issue === null;
+  const cu_btn = createClickUpActionButton(clickup_issue, disabled);
 
   container.appendChild(cu_btn);
 }
