@@ -23,51 +23,34 @@ function findPullRequestBranchName() {
   return title?.attributes["title"].value;
 }
 
-// Find the Redmine issue number from the given input.
-function findRedmineIssue(input) {
-  const regex = /(\d{5})/g;
-  const matches = input?.match(regex);
-
-  return matches ? Number(matches[0]) : null;
-}
 
 // Find the ClickUp issue number from the given input.
 function findClickUpIssue(input) {
-  const regex = /\b(?:[a-zA-Z]-)?\d{3}\b/g;
-  const matches = input?.match(regex);
+  // const regex = /[a-zA-Z]*(\s)*-(\s)*\d+\/;
+  // const regex = /\/([a-zA-Z]+(\s)*-(\s)*\d+)\/+/g;
+  const regex = /([a-zA-Z]+(\s)*-(\s)*\d+)+/g;
 
-  return matches ? Number(matches[0]) : null;
+  const matches = input.match(regex);
+
+  return matches ? String(matches).replace(/(\s)/g, "").toUpperCase() : null;
 }
 
 // Creates a button that links to the given link.
 function createActionButton(link, title, color) {
   const a = document.createElement("a");
   a.href = link;
+  a.className = "btn btn-sm";
+  a.style = `background-color:${color};color:#FFFFFF;margin: 0;`;
   a.target = "_blank";
-
-  const button = document.createElement("button");
-  button.className = "btn btn-sm";
-  button.style = `background-color:${color};color:#FFFFFF;margin: 0;`;
-  button.textContent = title;
-
-  a.appendChild(button);
+  a.textContent = title;
 
   return a;
-}
-
-// Creates a button that links to the Redmine issue.
-function createRedmineActionButton(issue) {
-  return createActionButton(
-    `https://redmine.deriv.cloud/issues/${issue}`,
-    "Redmine",
-    "#B0110F"
-  );
 }
 
 // Creates a button that links to the ClickUp issue.
 function createClickUpActionButton(issue) {
   return createActionButton(
-    `https://app.clickup.com/t/20696747/WALL-${issue}`,
+    `https://app.clickup.com/t/20696747/${issue}`,
     "ClickUp",
     "#7b68ee"
   );
@@ -76,24 +59,12 @@ function createClickUpActionButton(issue) {
 // Adds the button to the actions container when the page loads.
 function main() {
   const container = findActionsContainer();
-
-  if (!container) return;
-
   const title = findPullRequestTitle();
   const branch = findPullRequestBranchName();
-  const redmine_issue = findRedmineIssue(title) || findRedmineIssue(branch);
   const clickup_issue = findClickUpIssue(title) || findClickUpIssue(branch);
+  const cu_btn = createClickUpActionButton(clickup_issue);
 
-  // If there is no issue number in the title or branch, return.
-  if (!redmine_issue && !clickup_issue) return;
-
-  if (redmine_issue) {
-    container.appendChild(createRedmineActionButton(redmine_issue));
-  }
-
-  if (clickup_issue) {
-    container.appendChild(createClickUpActionButton(clickup_issue));
-  }
+  container.appendChild(cu_btn);
 }
 
 main();
